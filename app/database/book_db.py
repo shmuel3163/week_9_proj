@@ -60,15 +60,14 @@ class Book_db:
         conn.close()
 
         return data
-    
+
     def count_available_books(self):
-        
+
         conn = get_connection()
         cur = conn.cursor(dictionary=True)
 
         sql_command = (
-            "SELECT COUNT(*) AS `is_available` FROM `Books` WHERE "
-            "`is_available`=True"
+            "SELECT COUNT(*) AS `is_available` FROM `Books` WHERE `is_available`=True"
         )
         cur.execute(sql_command)
 
@@ -84,9 +83,7 @@ class Book_db:
         conn = get_connection()
         cur = conn.cursor(dictionary=True)
 
-        sql_command = (
-            "SELECT COUNT(*) AS `is_not_available` FROM `Books` WHERE `is_available`= False"
-        )
+        sql_command = "SELECT COUNT(*) AS `is_not_available` FROM `Books` WHERE `is_available`= False"
         cur.execute(sql_command)
 
         data = cur.fetchall()
@@ -95,7 +92,7 @@ class Book_db:
         conn.close()
 
         return data["`is_not_available`"]
-    
+
     def count_by_genre(self, genre):
 
         conn = get_connection()
@@ -116,14 +113,59 @@ class Book_db:
         conn = get_connection()
         cur = conn.cursor(dictionary=True)
 
-        sql_command = "SELECT COUNT(*) AS `active_borrows` FROM `Books`" \
+        sql_command = (
+            "SELECT COUNT(*) AS `active_borrows` FROM `Books`"
             " WHERE `borrowed_by_member_id`= %s,"
+        )
 
         cur.execute(sql_command, member_id)
 
-    def set_available(self,id, value ,member_id):
-        
+    def set_available(self, id, value, member_id):
+
+        conn = get_connection()
+        cur = conn.cursor(dictionary=True)
+
+        sql_command = (
+            "UPDATE `Books` SET is_available = %s ,"
+            "borrowed_by_member_id = %s WHERE id = %s"
+        )
+        sql_values = (value, member_id, id)
+
+        cur.execute(sql_command, sql_values)
+
+        result = cur.rowcount()
+
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+        return result
+
+    def update_book(self, id, data):
+
+        conn = get_connection()
+        cur = conn.cursor(dictionary=True)
+
+        values = []
+        sql_string = []
+
+        for key, val in data.items():
+            sql_string.append(str(key).lower() + " = %s")
+            values.append(val)
+
+        values.append(id)
+        sql_string = ",".join(sql_string)
+        sql_excecute_str = "UPDATE `Books` SET " + sql_string + " WHERE ID = %s"
+        sql_values = tuple(values)
+
+        cur.execute(sql_excecute_str, sql_values)
+        result = cur.rowcount
+
+        cur.close()
+        conn.commit()
+
+        return result
+
 
 booki = Book_db()
-
-
