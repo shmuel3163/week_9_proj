@@ -5,7 +5,7 @@
 המערכת תשמור את הנתונים בדאטא בייס מקומי .
 
 - הקוד ליצירת docker עם MySql  :
-docker run -d --name library -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=database -p 3306:3306 mysql
+docker run -d --name library -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=library_db -p 3306:3306 mysql
 
 ## מבנה תיקיות
 

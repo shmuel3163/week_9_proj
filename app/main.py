@@ -1,0 +1,16 @@
+from fastapi import FastAPI
+import uvicorn
+from logs.set_logger import logging
+from routers import book
+from database import db_connection
+
+
+app = FastAPI()
+
+app.include_router(book.router, prefix="/books")
+
+db_connection.set_tables()
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
