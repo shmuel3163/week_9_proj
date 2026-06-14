@@ -2,14 +2,12 @@ from fastapi import FastAPI
 import uvicorn
 from logs.set_logger import logging
 from routers import book
-from database import db_connection
+from database import db_connection , book_db
 
 
 app = FastAPI()
 
 app.include_router(book.router, prefix="/books")
-
-db_connection.set_tables()
 
 
 if __name__ == "__main__":

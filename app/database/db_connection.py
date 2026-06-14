@@ -24,7 +24,7 @@ def set_tables():
         cur = conn.cursor()
         print("ok")
         cur.execute("""
-        CREATE TABLE IF NOT EXISTS `Books`(`id` INT PRIMARY KEY AUTO_INCREMENT,`title` VARCHAR(50) NOT NULL, `author` VARCHAR(50) NOT NULL, `genre` ENUM( 'Fiction | Non-Fiction | Science | History | Other ') NOT NULL,
+        CREATE TABLE IF NOT EXISTS `Books`(`id` INT PRIMARY KEY AUTO_INCREMENT,`title` VARCHAR(50) NOT NULL, `author` VARCHAR(50) NOT NULL, `genre` ENUM('Fiction', 'Non-Fiction','Science','History', 'Other') NOT NULL,
     is_available BOOLEAN NOT NULL , borrowed_by_member_id INT)
                     """)
         print("ok")
@@ -34,7 +34,6 @@ def set_tables():
 `is_active` BOOLEAN NOT NULL, `total_borrows` INT NOT NULL )""")
 
         conn.commit()
-
         cur.close()
     else:
         print("the conection is not valid")
