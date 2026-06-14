@@ -7,15 +7,19 @@ class Book_db:
         cur = conn.cursor()
 
         sql_command = (
-            "INSERT INTO Books (`title`, `author`,`genre`) VALUES (%s, %s, %s),"
+            "INSERT INTO Books (`title`, `author`,`genre`) VALUES (%s, %s, %s)"
         )
         values = tuple(data.values())
+        print(values)
         cur.execute(sql_command, values)
 
+        new_id = cur.lastrowid
         conn.commit()
 
         cur.close()
         conn.close()
+
+        return new_id
 
     def get_all_books(self):
         conn = get_connection()
@@ -36,10 +40,10 @@ class Book_db:
         conn = get_connection()
         cur = conn.cursor(dictionary=True)
 
-        sql_command = "SELECT * FROM `Books` WHERE `id` = %s,"
-        cur.execute(sql_command, id)
+        sql_command = "SELECT * FROM `Books` WHERE `id` = %s"
+        cur.execute(sql_command, (str(id),))
 
-        data = cur.fetchone()
+        data = cur.fetchall()
 
         cur.close()
         conn.close()
@@ -99,7 +103,7 @@ class Book_db:
         cur = conn.cursor(dictionary=True)
 
         sql_command = "SELECT COUNT(*) AS %s FROM `Books` WHERE `genre`= %s,"
-        cur.execute(sql_command, genre, genre)
+        cur.execute(sql_command, (genre, genre,))
 
         data = cur.fetchall()
 
@@ -114,11 +118,16 @@ class Book_db:
         cur = conn.cursor(dictionary=True)
 
         sql_command = (
-            "SELECT COUNT(*) AS `active_borrows` FROM `Books`"
-            " WHERE `borrowed_by_member_id`= %s,"
+            "SELECT COUNT(*) AS `active_borrows` FROM `Books` WHERE `borrowed_by_member_id`= %s"
         )
 
-        cur.execute(sql_command, member_id)
+        cur.execute(sql_command, (member_id,))
+        result = cur.fetchone()
+
+        cur.close()
+        conn.close()
+
+        return result
 
     def set_available(self, id, value, member_id):
 
@@ -126,14 +135,16 @@ class Book_db:
         cur = conn.cursor(dictionary=True)
 
         sql_command = (
-            "UPDATE `Books` SET is_available = %s ,"
+            "UPDATE `Books` SET is_available = %s,"
             "borrowed_by_member_id = %s WHERE id = %s"
         )
         sql_values = (value, member_id, id)
+        print(sql_command)
+        print(sql_values)
 
-        cur.execute(sql_command, sql_values)
+        cur.execute(sql_command, (sql_values))
 
-        result = cur.rowcount()
+        result = cur.rowcount
 
         conn.commit()
 
